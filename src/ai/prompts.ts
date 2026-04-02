@@ -105,8 +105,6 @@ BRAG DOCUMENT:
 ${bragDoc}
 
 JOB DESCRIPTION:
-
-JOB DESCRIPTION:
 ${jobDesc}
 
 COMPANY NAMES (use these exactly):

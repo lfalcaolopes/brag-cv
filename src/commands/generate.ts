@@ -4,6 +4,7 @@ import { join } from 'node:path'
 import { getCompanyNames } from '../user-data/index.js'
 import { analyzeForResume, generateFromAnalysis } from '../ai/client.js'
 import { writePdf } from '../pdf/writer.js'
+import { saveManualAiResponse } from '../manual-generation/persist.js'
 
 const INPUT_DIR = join(process.cwd(), 'input')
 
@@ -26,6 +27,9 @@ async function main(): Promise<void> {
 
   console.log('Generating resume content from analysis...')
   const aiResponse = await generateFromAnalysis(analysis, companyNames)
+
+  console.log('Saving AI response for manual regeneration...')
+  await saveManualAiResponse(aiResponse)
 
   console.log('Building PDF...')
   const outputPath = await writePdf(aiResponse)

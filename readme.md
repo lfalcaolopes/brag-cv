@@ -71,6 +71,7 @@ Steps:
 4. Pick up the PDF from `output/`
 
 The tool detects the job description language (English or Portuguese) and generates the resume accordingly.
+It also refreshes `src/manual-generation/ai-response.ts` with the latest structured AI output, so you can edit that file and rerun `npm run generate:manual` without calling the AI again.
 
 ### `npm run generate:manual` -- PDF from manual AI output
 
@@ -83,6 +84,7 @@ Steps:
 4. Pick up the PDF from `output/`
 
 This is useful when you want more control over the AI interaction, want to tweak the response before rendering, or want to avoid spending API credits.
+The same file is also updated automatically after `npm run generate`, so the automated and manual flows share the same editable response source.
 
 ## Other commands
 

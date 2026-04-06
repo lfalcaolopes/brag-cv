@@ -11,17 +11,26 @@ import { DEFAULT_MODEL, ANALYSIS_TEMPERATURE, GENERATION_TEMPERATURE } from '../
 
 const openrouter = createOpenRouter()
 
+function logTokenUsage(step: 'analysis' | 'generation', usage: { inputTokens?: number; outputTokens?: number; totalTokens?: number }): void {
+  console.log(
+    `[ai:${step}] tokens input=${usage.inputTokens ?? 'n/a'} output=${usage.outputTokens ?? 'n/a'} total=${usage.totalTokens ?? 'n/a'}`
+  )
+}
+
 export async function analyzeForResume(
   bragDoc: string,
   jobDesc: string,
   companyNames: readonly string[]
 ): Promise<string> {
-  const { text } = await generateText({
+  const result = await generateText({
     model: openrouter(DEFAULT_MODEL),
     temperature: ANALYSIS_TEMPERATURE,
     system: ANALYSIS_SYSTEM_PROMPT,
     prompt: buildAnalysisPrompt(bragDoc, jobDesc, companyNames),
   })
+  const { text, usage } = result
+
+  logTokenUsage('analysis', usage)
 
   if (!text) {
     throw new Error('AI did not return a valid analysis')
@@ -34,7 +43,7 @@ export async function generateFromAnalysis(
   analysis: string,
   companyNames: readonly string[]
 ): Promise<AiResponse> {
-  const { output } = await generateText({
+  const result = await generateText({
     model: openrouter(DEFAULT_MODEL),
     temperature: GENERATION_TEMPERATURE,
     system: GENERATION_SYSTEM_PROMPT,
@@ -43,6 +52,9 @@ export async function generateFromAnalysis(
       schema: aiResponseSchema,
     }),
   })
+  const { output, usage } = result
+
+  logTokenUsage('generation', usage)
 
   if (!output) {
     throw new Error('AI did not return a valid resume object')

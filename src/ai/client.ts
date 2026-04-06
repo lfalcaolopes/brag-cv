@@ -27,8 +27,6 @@ export async function analyzeForResume(
     throw new Error('AI did not return a valid analysis')
   }
 
-  console.log({ analysis: text })
-
   return text
 }
 
@@ -49,8 +47,6 @@ export async function generateFromAnalysis(
   if (!output) {
     throw new Error('AI did not return a valid resume object')
   }
-
-  console.log({ output })
 
   return output
 }

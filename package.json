@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "generate": "tsx src/commands/generate.ts",
+    "generate:codex": "tsx src/commands/generate-codex.ts",
+    "generate:codex:xhigh": "BRAG_CV_CODEX_MODEL=gpt-5.4 BRAG_CV_CODEX_REASONING_EFFORT=xhigh tsx src/commands/generate-codex.ts",
     "preview": "tsx src/commands/generate-preview.ts",
     "preview:en": "PREVIEW_LANG=en tsx src/commands/generate-preview.ts",
     "preview:pt": "PREVIEW_LANG=pt tsx src/commands/generate-preview.ts",

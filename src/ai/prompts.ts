@@ -1,7 +1,7 @@
 export const SKILL_CATEGORIES = `- languagesAndFrameworks: programming languages and application frameworks only (e.g. TypeScript, JavaScript, React, Next.js, NestJS) — do NOT place UI libraries, form libraries, styling tools, state management, or data fetching libraries here (e.g. React Hook Form, Redux, Tailwind, React Query belong in others)
-- databasesAndApis: database engines, data stores, caches, ORMs, and API communication styles only (e.g. PostgreSQL, MongoDB, Redis, REST APIs, GraphQL) — do NOT place frontend data fetching libraries here (e.g. React Query, SWR belong in others)
+- databasesAndApis: database engines, data stores, caches, ORMs, API communication styles, and real-time communication protocols (e.g. PostgreSQL, MongoDB, Redis, REST APIs, GraphQL, WebSocket)
 - infrastructureAndCloud: cloud providers, containers, message brokers, and CI/CD tools only (e.g. Docker, AWS, RabbitMQ, Azure, GitHub Actions) — do NOT place bundlers or build tools here
-- others: styling tools, state management libraries, testing tools, build tooling, and methodologies (e.g. Tailwind CSS, Redux, Jest, Vite, Webpack, Scrum)`
+- others: styling tools, state management libraries, testing tools, build tooling, and methodologies (e.g. Tailwind CSS, Redux, Jest, Vite, Webpack, Scrum, SAML, SCIM)`
 
 export const ANALYSIS_SYSTEM_PROMPT = `You are a resume strategist. Analyze the job description and the candidate's brag document, then produce a structured analysis that will guide resume generation.
 

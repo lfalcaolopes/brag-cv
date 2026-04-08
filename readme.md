@@ -24,11 +24,13 @@ npm install
 cp .env.example .env
 ```
 
-Add your [OpenRouter](https://openrouter.ai/) API key to `.env`:
+Add your [OpenRouter](https://openrouter.ai/) API key to `.env` if you want to use `npm run generate`:
 
 ```
 OPENROUTER_API_KEY=your-key-here
 ```
+
+If you want to use `npm run generate:codex`, make sure the [Codex CLI](https://github.com/openai/codex) is installed, authenticated, and able to reach the network from your shell environment.
 
 ## Your data
 
@@ -45,7 +47,7 @@ Your static information (name, contact, education, work history with titles and 
 
 ## Generating a resume
 
-There are two main commands for producing a PDF. Which one you use depends on whether you want the tool to call the AI for you or you want to run the prompts yourself.
+There are three main commands for producing a PDF. Which one you use depends on whether you want the tool to call OpenRouter, call the Codex CLI, or just render a manual JSON response.
 
 ### `npm run generate` -- full AI pipeline
 
@@ -72,6 +74,33 @@ Steps:
 
 The tool detects the job description language (English or Portuguese) and generates the resume accordingly.
 It also refreshes `src/manual-generation/ai-response.ts` with the latest structured AI output, so you can edit that file and rerun `npm run generate:manual` without calling the AI again.
+
+### `npm run generate:codex` -- Codex CLI single-pass pipeline
+
+The Codex path. Reads your brag document and job description, calls `codex exec` with a Codex-specific single-pass prompt, validates the returned JSON, and outputs a PDF.
+
+```
+brag_document.md + job_description.md
+        |
+        v
+  Codex single pass -- strategic analysis + JSON generation in one run
+        |
+        v
+  PDF rendered to output/
+```
+
+Steps:
+1. Write your brag document in `input/brag_document.md`
+2. Paste the job description into `input/job_description.md`
+3. Run `npm run generate:codex`
+4. Pick up the PDF from `output/`
+
+This path keeps the same JSON contract and PDF output as the default pipeline.
+It also refreshes `src/manual-generation/ai-response.ts` with the latest structured AI output, so `npm run generate:manual` still works as a follow-up editing path.
+
+### `npm run generate:codex:xhigh` -- Codex CLI pinned to GPT-5.4 xhigh
+
+Same flow as `generate:codex`, but forces the Codex CLI invocation to use `gpt-5.4` with `xhigh` reasoning effort for this run.
 
 ### `npm run generate:manual` -- PDF from manual AI output
 
@@ -112,8 +141,11 @@ Runs the test suite with Vitest.
 src/
   ai/
     client.ts              # OpenRouter provider, AI call functions
+    codex-client.ts        # Codex CLI runner, parsing, and schema validation
+    codex-prompts.ts       # Codex-specific single-pass prompt builder
     prompts.ts             # System prompts and prompt builders
   commands/
+    generate-codex.ts      # Entry: Codex CLI pipeline
     generate.ts            # Entry: full AI pipeline
     generate-compare.ts    # Entry: multi-variant comparison
     generate-manual.ts        # Entry: PDF from manual AI output

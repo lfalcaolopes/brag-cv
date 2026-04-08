@@ -23,4 +23,5 @@ export function serializeAiResponseModule(aiResponse: AiResponse): string {
 export async function saveManualAiResponse(aiResponse: AiResponse) {
   const fileContents = serializeAiResponseModule(aiResponse)
   await writeFile(MANUAL_AI_RESPONSE_PATH, fileContents, 'utf-8')
+  return MANUAL_AI_RESPONSE_PATH
 }

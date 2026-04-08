@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import type { AiResponse, UserProfile } from '../types.js'
 
-const mockAiResponse = {
+const mockAiResponse: AiResponse = {
   suggested_title: 'Senior Software Engineer',
   professional_summary: 'Experienced engineer with expertise in distributed systems.',
   language: 'en',
@@ -12,7 +13,31 @@ const mockAiResponse = {
   },
   experiences: [
     { company: 'TechCorp', bullets: ['Led migration reducing deploy time by 60%'] },
-    { company: 'StartupCo', bullets: ['Built real-time notification system'] },
+    { company: 'OpenDoe', bullets: ['Built real-time notification system'] },
+  ],
+}
+
+const mockProfile: UserProfile = {
+  name: 'Jane Doe',
+  email: 'jane@example.com',
+  linkedin: 'linkedin.com/in/jane',
+  github: 'github.com/jane',
+  location: 'San Francisco, CA',
+  education: [{ institution: 'UC Berkeley', degree: 'B.S. CS', period: '2014-2018' }],
+  languages: [{ name: 'English', level: 'Native' }],
+  experiences: [
+    {
+      company: 'TechCorp',
+      title: 'Senior Engineer',
+      period: 'Jan 2022 - Present',
+      description: 'Fintech platform',
+    },
+    {
+      company: 'OpenDoe',
+      title: 'Engineer',
+      period: 'Jun 2019 - Dec 2021',
+      description: 'Enterprise software',
+    },
   ],
 }
 
@@ -58,15 +83,13 @@ describe('generate pipeline', () => {
     const { mergeExperiences } = await import('../pdf/merge.js')
     const { buildPdfDocument } = await import('../pdf/document.js')
     const { buildOutputFilename } = await import('../pdf/filename.js')
-    const { getUserProfile } = await import('../user-data/index.js')
     const { getLabels } = await import('../locales/index.js')
 
     const aiResponse = await generateFromAnalysis('analysis', ['TechCorp'])
-    const profile = getUserProfile(aiResponse.language)
     const labels = getLabels(aiResponse.language)
-    const merged = mergeExperiences(profile.experiences, aiResponse.experiences)
-    const doc = buildPdfDocument(profile, aiResponse, merged, labels)
-    const filename = buildOutputFilename(profile.name, aiResponse.suggested_title)
+    const merged = mergeExperiences(mockProfile.experiences, aiResponse.experiences)
+    const doc = buildPdfDocument(mockProfile, aiResponse, merged, labels)
+    const filename = buildOutputFilename(mockProfile.name, aiResponse.suggested_title)
 
     expect(doc.pageSize).toBe('A4')
     expect(merged.length).toBeGreaterThan(0)

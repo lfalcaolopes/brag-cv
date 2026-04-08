@@ -1,34 +1,29 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { buildCodexGenerationPrompt } from '../ai/codex-prompts.js'
+import { describe, expect, it } from 'vitest'
+import {
+  buildCodexGenerationPrompt,
+  CODEX_INPUT_FILES,
+} from '../ai/codex-prompts.js'
 
 describe('buildCodexGenerationPrompt', () => {
-  beforeEach(() => {
-    vi.useFakeTimers()
-    vi.setSystemTime(new Date('2026-04-07T12:00:00Z'))
+  it('references the expected temp input files and limits Codex to those files', () => {
+    const prompt = buildCodexGenerationPrompt()
+
+    expect(prompt).toContain(CODEX_INPUT_FILES.bragDocument)
+    expect(prompt).toContain(CODEX_INPUT_FILES.jobDescription)
+    expect(prompt).toContain(CODEX_INPUT_FILES.context)
+    expect(prompt).toContain('Read ONLY these workspace files as source material')
+    expect(prompt).toContain('Do not inspect any other file, directory, or hidden file in the workspace.')
   })
 
-  afterEach(() => {
-    vi.useRealTimers()
-  })
+  it('keeps the generation rules, company-name exactness, and JSON-only output contract', () => {
+    const prompt = buildCodexGenerationPrompt()
 
-  it('includes the brag document, job description, and company names', () => {
-    const prompt = buildCodexGenerationPrompt(
-      'Built internal tools in TypeScript.',
-      'Hiring a frontend engineer with React experience.',
-      ['Acme Corp', 'Startup Inc']
-    )
-
-    expect(prompt).toContain('Built internal tools in TypeScript.')
-    expect(prompt).toContain('Hiring a frontend engineer with React experience.')
-    expect(prompt).toContain('Acme Corp, Startup Inc')
-  })
-
-  it('includes today date and strict JSON-only instructions', () => {
-    const prompt = buildCodexGenerationPrompt('brag', 'job', ['Acme Corp'])
-
-    expect(prompt).toContain("TODAY'S DATE: 2026-04-07")
+    expect(prompt).toContain(`Use ${CODEX_INPUT_FILES.context} as the source of TODAY'S DATE and the exact company names.`)
+    expect(prompt).toContain(`The \`company\` field in each experience MUST match one of the company names from ${CODEX_INPUT_FILES.context} exactly.`)
     expect(prompt).toContain('your FINAL RESPONSE must be ONLY the JSON object')
     expect(prompt).toContain('Return ONLY valid JSON matching the format above.')
     expect(prompt).toContain('Do not wrap the JSON in markdown.')
+    expect(prompt).toContain('Vary action verbs. Do not repeat the same verb more than twice across all bullets.')
+    expect(prompt).toContain('languagesAndFrameworks: programming languages and application frameworks only')
   })
 })

@@ -65,10 +65,10 @@ export function buildPdfDocument(
     .filter(({ items }) => items.length > 0)
     .map(({ label, items }) => ({
       text: [
-        { text: `${label}: `, bold: true, fontSize: 9.5 },
-        { text: items.join(', '), fontSize: 9.5 },
+        { text: `${label}: `, bold: true, fontSize: 11 },
+        { text: items.join(', '), fontSize: 11 },
       ],
-      margin: [0, 1, 0, 1] as [number, number, number, number],
+      margin: [0, 2, 0, 2] as [number, number, number, number],
     }))
 
   const skills: Content[] = [
@@ -84,7 +84,7 @@ export function buildPdfDocument(
         {
           text: [
             { text: exp.company, style: 'experienceCompany' },
-            { text: `  —  ${exp.description}`, style: 'experienceDescription' },
+            ...(exp.description ? [{ text: `  —  ${exp.description}`, style: 'experienceDescription' }] : []),
           ],
           width: '*' as const,
         },
@@ -130,46 +130,46 @@ export function buildPdfDocument(
     },
     styles: {
       name: {
-        fontSize: 20,
+        fontSize: 23,
         bold: true,
         color: BLUE,
       },
       title: {
-        fontSize: 11,
+        fontSize: 13,
         color: GRAY,
       },
       contact: {
-        fontSize: 9,
+        fontSize: 10,
         color: GRAY,
       },
       contactLink: {
-        fontSize: 9,
+        fontSize: 10,
         color: BLUE,
         decoration: 'underline' as const,
       },
       sectionTitle: {
-        fontSize: 12,
+        fontSize: 14,
         bold: true,
         color: BLUE,
       },
       body: {
-        fontSize: 9.5,
+        fontSize: 11,
         lineHeight: 1.3,
       },
       experienceRole: {
-        fontSize: 11,
+        fontSize: 13,
         bold: true,
       },
       experienceCompany: {
-        fontSize: 10,
+        fontSize: 12,
         color: BLUE,
       },
       experienceDescription: {
-        fontSize: 9,
+        fontSize: 10,
         color: GRAY,
       },
       experiencePeriod: {
-        fontSize: 9,
+        fontSize: 10,
         color: GRAY,
         italics: true,
       },

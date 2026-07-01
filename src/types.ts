@@ -37,7 +37,7 @@ export type Experience = Readonly<{
   company: string
   title: string
   period: string
-  description: string
+  description?: string
 }>
 
 export type UserProfile = Readonly<{
@@ -55,6 +55,6 @@ export type MergedExperience = Readonly<{
   company: string
   title: string
   period: string
-  description: string
+  description?: string
   bullets: readonly string[]
 }>

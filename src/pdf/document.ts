@@ -1,5 +1,5 @@
 import type { TDocumentDefinitions, Content, ContentCanvas } from 'pdfmake/interfaces.js'
-import type { UserProfile, AiResponse, MergedExperience } from '../types.js'
+import type { UserProfile, AiResponse, MergedExperience, MergedProject } from '../types.js'
 import type { Labels } from '../locales/types.js'
 
 const BLUE = '#3D5A99'
@@ -26,7 +26,8 @@ export function buildPdfDocument(
   profile: UserProfile,
   aiResponse: AiResponse,
   mergedExperiences: readonly MergedExperience[],
-  labels: Labels
+  labels: Labels,
+  mergedProjects: readonly MergedProject[] = []
 ): TDocumentDefinitions {
   const contactLine: Content = {
     text: [
@@ -103,6 +104,33 @@ export function buildPdfDocument(
     horizontalLine(),
   ]
 
+  const projectItems: Content[] = mergedProjects.flatMap((project) => [
+    {
+      columns: [
+        {
+          text: [
+            { text: project.title, style: 'experienceCompany' },
+            ...(project.description ? [{ text: `  —  ${project.description}`, style: 'experienceDescription' }] : []),
+          ],
+          width: '*' as const,
+        },
+        { text: project.period, style: 'experiencePeriod', width: 'auto' as const, alignment: 'right' as const },
+      ],
+      margin: [0, 3, 0, 6] as [number, number, number, number],
+    },
+    ...(project.bullets.length > 0
+      ? [{ ul: [...project.bullets], style: 'body', margin: [0, 0, 0, 2] as [number, number, number, number] } as Content]
+      : []),
+  ])
+
+  const projects: Content[] = projectItems.length > 0
+    ? [
+        sectionTitle(labels.sections.personalProjects),
+        ...projectItems,
+        horizontalLine(),
+      ]
+    : []
+
   const educationItems: Content[] = profile.education.map((edu) => ({
     columns: [
       { text: `${edu.institution} - ${edu.degree}`, style: 'body', width: '*' as const },
@@ -124,7 +152,7 @@ export function buildPdfDocument(
   ]
 
   return {
-    content: [...header, ...summary, ...skills, ...experience, ...education, ...languages],
+    content: [...header, ...summary, ...skills, ...experience, ...projects, ...education, ...languages],
     defaultStyle: {
       font: 'Helvetica',
     },

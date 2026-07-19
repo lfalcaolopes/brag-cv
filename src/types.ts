@@ -18,6 +18,14 @@ export const aiResponseSchema = z.object({
       })
     )
     .min(1, 'experiences must not be empty'),
+  projects: z
+    .array(
+      z.object({
+        title: z.string().min(1, 'title must not be empty'),
+        bullets: z.array(z.string().min(1, 'bullet must not be empty')).min(1, 'each project must have at least one bullet'),
+      })
+    )
+    .optional()
 })
 
 export type AiResponse = z.infer<typeof aiResponseSchema>
@@ -40,6 +48,12 @@ export type Experience = Readonly<{
   description?: string
 }>
 
+export type Project = Readonly<{
+  title: string
+  period: string
+  description?: string
+}>
+
 export type UserProfile = Readonly<{
   name: string
   email: string
@@ -49,10 +63,18 @@ export type UserProfile = Readonly<{
   education: readonly Education[]
   languages: readonly Language[]
   experiences: readonly Experience[]
+  projects?: readonly Project[]
 }>
 
 export type MergedExperience = Readonly<{
   company: string
+  title: string
+  period: string
+  description?: string
+  bullets: readonly string[]
+}>
+
+export type MergedProject = Readonly<{
   title: string
   period: string
   description?: string

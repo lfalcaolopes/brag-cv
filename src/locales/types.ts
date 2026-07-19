@@ -3,6 +3,7 @@ export type Labels = Readonly<{
     professionalSummary: string
     technicalSkills: string
     professionalExperience: string
+    personalProjects: string
     education: string
     languages: string
   }

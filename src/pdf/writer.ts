@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import PdfPrinter from 'pdfmake'
 import type { TDocumentDefinitions } from 'pdfmake/interfaces.js'
 import { getUserProfile } from '../user-data/index.js'
-import { mergeExperiences } from './merge.js'
+import { mergeExperiences, mergeProjects } from './merge.js'
 import { buildPdfDocument } from './document.js'
 import { buildOutputFilename } from './filename.js'
 import { FONTS } from './fonts.js'
@@ -29,8 +29,9 @@ export function buildPdfBuffer(docDefinition: TDocumentDefinitions): Promise<Buf
 export async function writePdf(aiResponse: AiResponse): Promise<string> {
   const profile = getUserProfile(aiResponse.language)
   const labels = getLabels(aiResponse.language)
-  const merged = mergeExperiences(profile.experiences, aiResponse.experiences)
-  const docDefinition = buildPdfDocument(profile, aiResponse, merged, labels)
+  const mergedExperiences = mergeExperiences(profile.experiences, aiResponse.experiences)
+  const mergedProjects = mergeProjects(profile.projects, aiResponse.projects)
+  const docDefinition = buildPdfDocument(profile, aiResponse, mergedExperiences, labels, mergedProjects)
 
   const pdfBuffer = await buildPdfBuffer(docDefinition)
 

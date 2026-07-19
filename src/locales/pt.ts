@@ -5,6 +5,7 @@ export const pt: Labels = {
     professionalSummary: 'Resumo Profissional',
     technicalSkills: 'Habilidades Técnicas',
     professionalExperience: 'Experiência Profissional',
+    personalProjects: 'Projetos Pessoais',
     education: 'Formação Acadêmica',
     languages: 'Idiomas',
   },

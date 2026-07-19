@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { mergeExperiences } from '../pdf/merge.js'
+import { mergeExperiences, mergeProjects } from '../pdf/merge.js'
 import { buildOutputFilename } from '../pdf/filename.js'
 import { buildPdfDocument } from '../pdf/document.js'
 import type { UserProfile, AiResponse } from '../types.js'
@@ -74,6 +74,28 @@ describe('mergeExperiences', () => {
   })
 })
 
+describe('mergeProjects', () => {
+  it('returns an empty list when projects are omitted', () => {
+    expect(mergeProjects(undefined, undefined)).toEqual([])
+  })
+
+  it('merges user projects with AI bullets by title', () => {
+    const merged = mergeProjects(
+      [{ title: 'Civic App', period: 'Jun 2026', description: 'Voting transparency project' }],
+      [{ title: 'civic app', bullets: ['Built public vote comparison views'] }]
+    )
+
+    expect(merged).toEqual([
+      {
+        title: 'Civic App',
+        period: 'Jun 2026',
+        description: 'Voting transparency project',
+        bullets: ['Built public vote comparison views'],
+      },
+    ])
+  })
+})
+
 describe('buildOutputFilename', () => {
   it('generates a slugified filename from suggested_title', () => {
     const filename = buildOutputFilename('Jane Doe', 'Senior Engineer')
@@ -136,5 +158,29 @@ describe('buildPdfDocument', () => {
     expect(contentStr).toContain('IDIOMAS')
     expect(contentStr).toContain('HABILIDADES TÉCNICAS')
     expect(contentStr).toContain('Linguagens & Frameworks')
+  })
+
+  it('omits the personal projects section when no projects are provided', () => {
+    const labels = getLabels('en')
+    const merged = mergeExperiences(mockProfile.experiences, mockAiResponse.experiences)
+    const doc = buildPdfDocument(mockProfile, mockAiResponse, merged, labels)
+    const contentStr = JSON.stringify(doc.content)
+
+    expect(contentStr).not.toContain('PERSONAL PROJECTS')
+  })
+
+  it('includes personal projects when merged project data is provided', () => {
+    const labels = getLabels('en')
+    const mergedExperiences = mergeExperiences(mockProfile.experiences, mockAiResponse.experiences)
+    const mergedProjects = mergeProjects(
+      [{ title: 'Civic App', period: 'Jun 2026' }],
+      [{ title: 'Civic App', bullets: ['Built public vote comparison views'] }]
+    )
+    const doc = buildPdfDocument(mockProfile, mockAiResponse, mergedExperiences, labels, mergedProjects)
+    const contentStr = JSON.stringify(doc.content)
+
+    expect(contentStr).toContain('PERSONAL PROJECTS')
+    expect(contentStr).toContain('Civic App')
+    expect(contentStr).toContain('Built public vote comparison views')
   })
 })

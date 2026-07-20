@@ -115,6 +115,8 @@ Steps:
 This is useful when you want more control over the AI interaction, want to tweak the response before rendering, or want to avoid spending API credits.
 The same file is also updated automatically after `npm run generate`, so the automated and manual flows share the same editable response source.
 
+To bold words in a manually edited bullet, wrap them in paired `**` markers. For example, `Built APIs with **Node.js**, reducing latency by **40%**.` renders `Node.js` and `40%` in bold. Plain bullets remain supported, and unmatched markers are rendered as ordinary text.
+
 ## Other commands
 
 ### `npm run preview`

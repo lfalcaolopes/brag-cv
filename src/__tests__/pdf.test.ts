@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { mergeExperiences, mergeProjects } from '../pdf/merge.js'
 import { buildOutputFilename } from '../pdf/filename.js'
 import { buildPdfDocument } from '../pdf/document.js'
+import { buildPdfBuffer } from '../pdf/writer.js'
 import type { UserProfile, AiResponse } from '../types.js'
 import { getLabels } from '../locales/index.js'
 
@@ -182,5 +183,36 @@ describe('buildPdfDocument', () => {
     expect(contentStr).toContain('PERSONAL PROJECTS')
     expect(contentStr).toContain('Civic App')
     expect(contentStr).toContain('Built public vote comparison views')
+  })
+
+  it('renders bold markers in experience and project bullets as styled text', async () => {
+    const aiResponse: AiResponse = {
+      ...mockAiResponse,
+      experiences: [
+        { company: 'Acme Corp', bullets: ['Built APIs with **Node.js**, reducing latency by **40%**.'] },
+        { company: 'Startup Inc', bullets: ['Built real-time notification system'] },
+      ],
+    }
+    const mergedExperiences = mergeExperiences(mockProfile.experiences, aiResponse.experiences)
+    const mergedProjects = mergeProjects(
+      [{ title: 'Civic App', period: 'Jun 2026' }],
+      [{ title: 'Civic App', bullets: ['Built views with **React**.'] }]
+    )
+    const doc = buildPdfDocument(
+      mockProfile,
+      aiResponse,
+      mergedExperiences,
+      getLabels('en'),
+      mergedProjects
+    )
+    const contentStr = JSON.stringify(doc.content)
+
+    expect(contentStr).toContain('{"text":"Node.js","bold":true}')
+    expect(contentStr).toContain('{"text":"40%","bold":true}')
+    expect(contentStr).toContain('{"text":"React","bold":true}')
+    expect(contentStr).not.toContain('**')
+
+    const pdfBuffer = await buildPdfBuffer(doc)
+    expect(pdfBuffer.subarray(0, 4).toString()).toBe('%PDF')
   })
 })

@@ -1,6 +1,7 @@
 import type { TDocumentDefinitions, Content, ContentCanvas } from 'pdfmake/interfaces.js'
 import type { UserProfile, AiResponse, MergedExperience, MergedProject } from '../types.js'
 import type { Labels } from '../locales/types.js'
+import { formatBullet } from './bullet-format.js'
 
 const BLUE = '#3D5A99'
 const GRAY = '#666666'
@@ -94,7 +95,7 @@ export function buildPdfDocument(
       margin: [0, 3, 0, 6] as [number, number, number, number],
     },
     ...(exp.bullets.length > 0
-      ? [{ ul: [...exp.bullets], style: 'body', margin: [0, 0, 0, 2] as [number, number, number, number] } as Content]
+      ? [{ ul: exp.bullets.map(formatBullet), style: 'body', margin: [0, 0, 0, 2] as [number, number, number, number] } as Content]
       : []),
   ])
 
@@ -119,7 +120,7 @@ export function buildPdfDocument(
       margin: [0, 3, 0, 6] as [number, number, number, number],
     },
     ...(project.bullets.length > 0
-      ? [{ ul: [...project.bullets], style: 'body', margin: [0, 0, 0, 2] as [number, number, number, number] } as Content]
+      ? [{ ul: project.bullets.map(formatBullet), style: 'body', margin: [0, 0, 0, 2] as [number, number, number, number] } as Content]
       : []),
   ])
 
